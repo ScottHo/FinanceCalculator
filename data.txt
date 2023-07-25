@@ -1,0 +1,13 @@
+[General]
+startingYear = 2024
+startingMonth = 1
+endingYear = 2030
+endingMonth = 12
+
+[SavingsOrInvestment_Template]
+startingAmount = 10000
+monthlyContribution = 1000
+yearlyContribution = 5000
+interest = 0.05
+monthlyContributionIncreasePerYear = 100
+yearlyContributionIncrease = 500
