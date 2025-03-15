@@ -3,6 +3,10 @@ startingYear = 2024
 startingMonth = 1
 endingYear = 2030
 endingMonth = 12
+interest = 0.08
+inflation = 0.022
+expectedSpendTillDeath = 45000
+socialSecurity = 8000
 
 [SavingsOrInvestment_Template]
 startingAmount = 10000

@@ -45,10 +45,10 @@ def calculate(
             cYear += 1
             cMonthlyContrib += monthlyContributionIncreasePerYear
             cYearContrib += yearlyContributionIncrease
-    return
+    return cBalance
 
 def aggregate(writer, general, data):
-    calculate(
+    return calculate(
         csvWriter=writer,
         startingYear=int(general['startingyear']),
         endingYear=int(general['endingyear']),
@@ -57,10 +57,9 @@ def aggregate(writer, general, data):
         startingAmount=float(data['startingamount']),
         monthlyContribution=float(data['monthlycontribution']),
         yearlyContribution=float(data['yearlycontribution']),
-        interest=float(data['interest']),
+        interest=float(general['interest']),
         monthlyContributionIncreasePerYear=float(data['monthlycontributionincreaseperyear']),
         yearlyContributionIncrease=float(data['yearlycontributionincrease']))
-    return
 
 
 config = configparser.RawConfigParser()
@@ -74,9 +73,28 @@ f = open('output.csv', 'w', newline='', encoding='utf-8')
 writer = csv.writer(f)
 headers = ['Initial Balance', 'Contribution', 'Interest Gained', 'Total Interest Gained', 'Ending Balance']
 
+totalAtRetirement = 0
+
 for section in sections:
     writer.writerow([section] + headers)
     data = dict(config.items(section))
-    aggregate(writer, generalDict, data)
+    totalAtRetirement += aggregate(writer, generalDict, data)
 
-print("Complete! Open output.csv to view results.")
+gd = generalDict 
+yearsTillRetire = int(gd["endingyear"]) - int(generalDict["startingyear"])
+inflation = (1+float(gd["inflation"]))**yearsTillRetire
+
+print(f"Total at Retirement: ${totalAtRetirement:.2f}")
+yearsToLive = 0
+expectedSpend = float(gd["expectedspendtilldeath"])
+expectedSpend = expectedSpend*inflation
+print(f"expectedSpend with inflation: ${expectedSpend:.2f}")
+while totalAtRetirement > expectedSpend:
+    yearsToLive += 1
+    totalAtRetirement = totalAtRetirement - expectedSpend
+    totalAtRetirement = totalAtRetirement * (1+float(gd["interest"]))
+    totalAtRetirement += int(gd["socialsecurity"])
+    expectedSpend = expectedSpend*(1+float(gd["inflation"]))
+print(f"Live {yearsToLive} more years with ${totalAtRetirement:.2f} left over")
+
+print("Complete! Open output.csv to view detailed results.")
